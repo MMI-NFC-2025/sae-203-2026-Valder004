@@ -1,15 +1,37 @@
 @import "tailwindcss";
+@theme {
+    --color-primary: oklch(0.5069 0.2715 271.26);
 
-/* Couleurs simples */
-:root {
-  --rouge: #e63946;
-  --orange: #f4a261;
-  --noir: #0a0a0a;
-  --gris: #1a1a1a;
-  --blanc: #fafafa;
+    --color-secondary: oklch(0.1343 0.0705 263.37);
+
+
+    --font-family: 'Cantora One', sans-serif;
+
+    --my-grid: repeat(12, minmax(0, 88px));
 }
 
-/* Police */
-body {
-  font-family: 'Space Grotesk', sans-serif;
+@layer base {
+    body {
+        @apply font-[--font-family] text-base leading-normal;
+    }
+
+    h1 {
+        @apply text-5xl leading-tight font-[--font-family] lg:text-6xl;
+    }
+
+    h2 {
+        @apply text-2xl leading-tight font-[--font-family] lg:text-4xl;
+    }
+
+    h3 {
+        @apply my-4 text-xl leading-tight font-[--font-family];
+    }
 }
+
+@layer components {
+    .grille {
+        @apply px-6 lg:grid lg:grid-cols-(--my-grid) lg:justify-center lg:gap-8;
+    }
+}
+
+
