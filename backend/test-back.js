@@ -1,79 +1,114 @@
-// test-back.js - Tests des fonctions PocketBase
-// Lancer avec: node backend/test-back.js
+import {artistesSorted, scenesName, artistesName, artisteID, sceneID, allartistebysceneId, allartistebysceneName, addArtiste, addScene, updateArtiste, updateScene} from './backend.mjs';
 
-import {
-    getAllArtistes,
-    getArtisteById,
-    getArtisteBySlug,
-    getArtistesByJour,
-    getArtistesByScene,
-    getProgramme,
-    getProgrammeByJour,
-    getInfos,
-    pb
-} from './backend.mjs';
 
-// Fonction pour afficher les résultats
-function afficher(titre, data) {
-    console.log('\n========================================');
-    console.log(titre);
-    console.log('========================================');
-    console.log(JSON.stringify(data, null, 2));
+/* artistes par date
+try {
+    const records = await artistesSorted();
+    console.log(JSON.stringify(records, null, 2));
+} catch (e) {
+    console.error(e);
+}
+/
+/ scenes par nom 
+try {
+    const records = await scenesName();
+    console.log(JSON.stringify(records, null, 2));
+} catch (e) {
+    console.error(e);
 }
 
-// Fonction principale de test
-async function runTests() {
-    console.log('Démarrage des tests PocketBase...');
-    console.log('URL PocketBase:', pb.baseURL);
 
-    // Test 1: Récupérer tous les artistes
-    console.log('\n--- Test 1: getAllArtistes ---');
-    const artistes = await getAllArtistes();
-    afficher('Tous les artistes', artistes);
-
-    // Test 2: Récupérer un artiste par ID (si des artistes existent)
-    if (artistes.length > 0) {
-        console.log('\n--- Test 2: getArtisteById ---');
-        const premierArtiste = await getArtisteById(artistes[0].id);
-        afficher('Premier artiste par ID', premierArtiste);
-
-        // Test 3: Récupérer un artiste par slug (si le champ existe)
-        if (artistes[0].slug) {
-            console.log('\n--- Test 3: getArtisteBySlug ---');
-            const artisteParSlug = await getArtisteBySlug(artistes[0].slug);
-            afficher('Artiste par slug', artisteParSlug);
-        }
-    }
-
-    // Test 4: Récupérer les artistes du 29 août
-    console.log('\n--- Test 4: getArtistesByJour ---');
-    const artistes29 = await getArtistesByJour('29 août');
-    afficher('Artistes du 29 août', artistes29);
-
-    // Test 5: Récupérer les artistes par scène
-    console.log('\n--- Test 5: getArtistesByScene ---');
-    const artistesKiosque = await getArtistesByScene('kiosque');
-    afficher('Artistes du Kiosque', artistesKiosque);
-
-    // Test 6: Récupérer le programme
-    console.log('\n--- Test 6: getProgramme ---');
-    const programme = await getProgramme();
-    afficher('Programme complet', programme);
-
-    // Test 7: Récupérer le programme du 30 août
-    console.log('\n--- Test 7: getProgrammeByJour ---');
-    const programme30 = await getProgrammeByJour('30 août');
-    afficher('Programme du 30 août', programme30);
-
-    // Test 8: Récupérer les infos pratiques
-    console.log('\n--- Test 8: getInfos ---');
-    const infos = await getInfos();
-    afficher('Infos pratiques', infos);
-
-    console.log('\n========================================');
-    console.log('Tests terminés !');
-    console.log('========================================');
+/artistes par nom
+try {
+    const records = await artistesName();
+    console.log(JSON.stringify(records, null, 2));
+} catch (e) {
+    console.error(e);
 }
 
-// Lancer les tests
-runTests().catch(console.error);
+/ info d'un artiste par id
+try { 
+    const records = await artisteID('rt5muls1ybuxd1h'); 
+    console.log(JSON.stringify(records, null, 2)); 
+} catch (e) { 
+    console.error(e);
+}
+
+/* info d'une scene par id
+try { 
+    const records = await sceneID('c7a6xkqufv9azad'); 
+    console.log(JSON.stringify(records, null, 2)); 
+} catch (e) { 
+    console.error(e);
+}
+
+/* artistes d'une scene par id de la scene et trié par date
+try {
+    const records = await allartistebysceneId('c7a6xkqufv9azad');
+    console.log(JSON.stringify(records, null, 2));
+} catch (e) {
+    console.error(e);
+}
+
+/*artistes d'une scene par nom de la scene et trié par date
+try {
+    const records = await allartistebysceneName('Kiosque');
+    console.log(JSON.stringify(records, null, 2));
+} catch (e) {
+    console.error(e);
+}
+/* ajouter un artiste
+try {
+    const artisteData = {
+        "nom": "Valentin Deroo",
+        "date_de_representation": "2026-08-29T20:00:00.000Z",
+        "scene" : "c7a6xkqufv9azad",
+        "description" : "il est trop beau",
+}; 
+    await addArtiste(artisteData);
+} catch (e) {
+    console.error(e);
+}
+/
+
+/ ajouter une scene
+try {
+    const sceneData = {
+        "nom": "Arena",
+        "artistes": ["oggifpv5a7afcx6", "w4ooktfxkp52nwj"],
+        "description" : "scene pour les plus beau",
+}; 
+    await addScene(sceneData);
+} catch (e) {
+    console.error(e);
+}
+
+/* modifier un artiste
+try {
+    const data = {
+        "nom": "Dis'cover",
+        "date_de_representation": "2026-08-29T19:00:00.000Z",
+        "scene" : "c7a6xkqufv9azad",
+        "description" : " Adèpte des ré-interprétations de grands classiques dans des arrangements Soul / Pop.",
+    };
+    const record = await updateArtiste('rt5muls1ybuxd1h', data);
+    console.log("Artiste mis à jour avec succès");
+    console.log(JSON.stringify(record, null, 2));
+} catch (e) {
+    console.error(e);
+}
+
+
+/* modifier une scene*/
+try {
+    const data = {
+        "nom": "Kiosque",
+        "artistes": ["rt5muls1ybuxd1h", "w4ooktfxkp52nwj"],
+        "description" : "Première scène du festival qui se situe au kiosque du Parc près la rose à Montbéliard. ",
+    };
+    const record = await updateScene('c7a6xkqufv9azad', data);
+    console.log("Scène mise à jour avec succès");
+    console.log(JSON.stringify(record, null, 2));
+} catch (e) {
+    console.error(e);
+}

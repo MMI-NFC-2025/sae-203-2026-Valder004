@@ -145,7 +145,7 @@ import logoClaire from "../assets/icones/vache/vache-claire.svg";
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
-        const isOutside = !menuBtn?.contains(e.target) && !mobileMenu?.contains(e.target);
+        const isOutside = !menuBtn?.contains(e.target as Node) && !mobileMenu?.contains(e.target as Node);
         if (isOutside && !mobileMenu?.classList.contains('hidden')) {
             mobileMenu?.classList.add('hidden');
             mainHeader?.classList.remove('bg-secondary');

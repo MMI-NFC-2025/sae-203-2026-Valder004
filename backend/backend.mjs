@@ -1,137 +1,86 @@
-// backend.mjs - Fonctions PocketBase pour le festival Jumelages
-import PocketBase from 'pocketbase';
-
-// Connexion à PocketBase
+import PocketBase from 'pocketbase'; 
 const pb = new PocketBase('http://127.0.0.1:8090');
 
-// ============================================
-// FONCTION UTILITAIRE POUR LES IMAGES
-// ============================================
-
-// Construire l'URL d'une image PocketBase
-export function getImageUrl(record, filename) {
-    if (!record || !filename) return null;
-    return `${pb.baseUrl}/api/files/${record.id}/${filename}`;
+export async function artistesSorted() { 
+    const records = await pb.collection('Artiste').getFullList({ sort: 'date_de_representation' }); 
+    return records; 
 }
 
-// ============================================
-// FONCTIONS POUR LES ARTISTES (invités)
-// ============================================
-
-// Récupérer tous les artistes
-export async function getAllArtistes() {
-    try {
-        const records = await pb.collection('artistes').getFullList({
-            sort: 'nom',
-        });
-        return records;
-    } catch (error) {
-        console.error('Erreur getAllArtistes:', error);
-        return [];
-    }
+export async function scenesName() { 
+    const records = await pb.collection('Scene').getFullList({ sort: 'nom' }); 
+    return records; 
 }
 
-// Récupérer un artiste par son ID
-export async function getArtisteById(id) {
+export async function artistesName() { 
+    const records = await pb.collection('Artiste').getFullList({ sort: 'nom' }); 
+    return records; 
+}
+
+export async function getAllArtistes() { 
+    const records = await pb.collection('Artiste').getFullList({ sort: 'nom' }); 
+    return records; 
+}
+
+export async function artisteID(id) { 
+    const record = await pb.collection('Artiste').getOne(id); 
+    return record; 
+}
+
+export async function sceneID(id) { 
+    const record = await pb.collection('Scene').getOne(id); 
+    return record; 
+}
+
+export async function allartistebysceneId(id) { 
+    const records = await pb.collection('Artiste').getFullList({ filter: scene="${id}", sort: 'date_de_representation' }); 
+    return records; 
+}
+
+export async function allartistebysceneName(nom) {
+    const scene = await pb.collection('Scene').getFirstListItem(nom="${nom}");
+    const records = await pb.collection('Artiste').getFullList({ filter: scene="${scene.id}", sort: 'date_de_representation' }); 
+    return records; 
+}
+export async function addArtiste(artisteData) {
     try {
-        const record = await pb.collection('artistes').getOne(id);
+        const record = await pb.collection('Artiste').create(artisteData);
+        console.log('Artiste ajouté :', record);
         return record;
     } catch (error) {
-        console.error('Erreur getArtisteById:', error);
-        return null;
+        console.error("Erreur lors de l'ajout de l'artiste :", error);
+        throw error;
     }
 }
 
-// Récupérer un artiste par son slug
-export async function getArtisteBySlug(slug) {
+export async function addScene(sceneData) {
     try {
-        const record = await pb.collection('artistes').getFirstListItem(`slug="${slug}"`);
+        const record = await pb.collection('Scene').create(sceneData);
+        console.log('Scène ajoutée :', record);
         return record;
     } catch (error) {
-        console.error('Erreur getArtisteBySlug:', error);
-        return null;
+        console.error("Erreur lors de l'ajout de la scène :", error);
+        throw error;
     }
 }
 
-// Récupérer les artistes par jour
-export async function getArtistesByJour(jour) {
+export async function updateArtiste(id, artisteData) {
     try {
-        const records = await pb.collection('artistes').getFullList({
-            filter: `jour="${jour}"`,
-            sort: 'heure',
-        });
-        return records;
+        const record = await pb.collection('Artiste').update(id, artisteData);
+        console.log('Artiste modifié :', record);
+        return record;
     } catch (error) {
-        console.error('Erreur getArtistesByJour:', error);
-        return [];
+        console.error("Erreur lors de la modification de l'artiste :", error);
+        throw error;
     }
 }
 
-// Récupérer les artistes par scène
-export async function getArtistesByScene(scene) {
+export async function updateScene(id, sceneData) {
     try {
-        const records = await pb.collection('artistes').getFullList({
-            filter: `scene="${scene}"`,
-            sort: 'heure',
-        });
-        return records;
+        const record = await pb.collection('Scene').update(id, sceneData);
+        console.log('Scène modifiée :', record);
+        return record;
     } catch (error) {
-        console.error('Erreur getArtistesByScene:', error);
-        return [];
+        console.error("Erreur lors de la modification de la scène :", error);
+        throw error;
     }
 }
-
-// ============================================
-// FONCTIONS POUR LE PROGRAMME
-// ============================================
-
-// Récupérer tout le programme
-export async function getProgramme() {
-    try {
-        const records = await pb.collection('programme').getFullList({
-            sort: 'jour,heure',
-            expand: 'artiste',
-        });
-        return records;
-    } catch (error) {
-        console.error('Erreur getProgramme:', error);
-        return [];
-    }
-}
-
-// Récupérer le programme par jour
-export async function getProgrammeByJour(jour) {
-    try {
-        const records = await pb.collection('programme').getFullList({
-            filter: `jour="${jour}"`,
-            sort: 'heure',
-            expand: 'artiste',
-        });
-        return records;
-    } catch (error) {
-        console.error('Erreur getProgrammeByJour:', error);
-        return [];
-    }
-}
-
-// ============================================
-// FONCTIONS POUR LES INFOS PRATIQUES
-// ============================================
-
-// Récupérer toutes les infos
-export async function getInfos() {
-    try {
-        const records = await pb.collection('infos').getFullList({
-            sort: 'ordre',
-        });
-        return records;
-    } catch (error) {
-        console.error('Erreur getInfos:', error);
-        return [];
-    }
-}
-
-// ============================================
-// EXPORT DE L'INSTANCE POCKETBASE
-// ============================================
-export { pb };
