@@ -33,5 +33,11 @@
         @apply px-6 lg:grid lg:grid-cols-(--my-grid) lg:justify-center lg:gap-8;
     }
 }
+@theme {
+  --font-family: 'Alumni Sans SC Variable', sans-serif;
+}
 
+body, h1, h2, h3, p {
+    @apply font-family;
+}
 

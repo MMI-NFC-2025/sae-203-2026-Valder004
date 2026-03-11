@@ -7,7 +7,7 @@ import menuCloseLogo from "../assets/icones/menu/menu-croix.svg";
 import logoClaire from "../assets/icones/vache/vache-claire.svg";
 ---
 
-<header id="main-header" class="bg-white px-6 py-4 fixed w-full top-0 z-50 shadow-md transition-colors duration-300">
+<header id="main-header" class="bg-white px-5 py-4 fixed w-full top-0 z-50 shadow-md transition-colors duration-300">
     <nav class="flex justify-between items-center max-w-6xl mx-auto">
         <!-- Logo -->
         <a href="/" class="flex items-center">
@@ -44,7 +44,7 @@ import logoClaire from "../assets/icones/vache/vache-claire.svg";
         </ul>
 
         <!-- Menu Button Mobile -->
-        <button id="menu-btn" class="md:hidden flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+        <button id="menu-btn" class="md:hidden flex items-center cursor-pointer hover:opacity-80 transition-opacity -mr-2">
             <Image id="menu-icon-open" src={menuLogo} alt="Menu" class="h-6 w-auto" />
             <Image id="menu-icon-close" src={menuCloseLogo} alt="Fermer" class="hidden h-6 w-auto" />
         </button>

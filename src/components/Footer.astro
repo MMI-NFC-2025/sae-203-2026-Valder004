@@ -1,13 +1,18 @@
 ---
-// Composant Footer - Pied de page
+import logoClaire from "../assets/icones/vache/vache-claire.svg";
+import { Image } from 'astro:assets';
 ---
 
 <footer class="bg-secondary p-8 text-center border-t">
-//il faut une image du logo ici
-    <p class="text-gray-400">29 - 30 Août 2025</p>
+    <mailto class="text-gray-400">Jumelages@gmail.com</mailto>
+    <p class="text-gray-400">01.72.68.23.96</p>
+        <p class="text-gray-400">25200 Montbéliard</p>
     <div class="flex justify-center gap-6 mt-4">
-        <a href="/infos" class="text-gray-400">Infos</a>
-        <a href="/invites" class="text-gray-400">Invités</a>
-        <a href="/programme" class="text-gray-400">Programme</a>
+        <a href="/infos" class="text-gray-200">Infos</a>
+        <a href="/invites" class="text-gray-200">Invités</a>
+        <a href="/programme" class="text-gray-200">Programme</a>
+    </div>
+    <div class="flex justify-center mt-8">
+        <Image id="logo-light" src={logoClaire} alt="Logo Jumelages" class="h-18 w-auto" />
     </div>
 </footer>
