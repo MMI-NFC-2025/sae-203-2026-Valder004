@@ -1,16 +1,26 @@
 ---
-// Composant Header - Navigation du site
+import { Image } from "astro:assets";
 const { currentPage } = Astro.props;
+import logo from "../assets/icones/vache/vache-fonce.svg";
+import menuLogo from "../assets/icones/menu/menu-bleu.svg";
+import menuCloseLogo from "../assets/icones/menu/menu-croix.svg";
+import logoClaire from "../assets/icones/vache/vache-claire.svg";
 ---
 
-<header class="bg-primary p-4 fixed w-full top-0 z-10">
+<header id="main-header" class="bg-white px-6 py-4 fixed w-full top-0 z-50 shadow-md transition-colors duration-300">
     <nav class="flex justify-between items-center max-w-6xl mx-auto">
-        <a href="/" class="text-2xl font-bold text-[#000000]">Jumelages</a>
-        <ul class="flex gap-6">
+        <!-- Logo -->
+        <a href="/" class="flex items-center">
+            <Image id="logo-dark" src={logo} alt="Logo Jumelages" class="h-12 w-auto" />
+            <Image id="logo-light" src={logoClaire} alt="Logo Jumelages" class="hidden h-12 w-auto" />
+        </a>
+
+        <!-- Navigation Desktop -->
+        <ul class="hidden md:flex gap-8">
             <li>
                 <a 
                     href="/infos" 
-                    class={currentPage === 'infos' ? 'text-[#000000]' : 'hover:text-[#000000]'}
+                    class={`transition-colors ${currentPage === 'infos' ? 'text-[#e63946] font-bold' : 'text-[#000000] hover:text-[#e63946]'}`}
                 >
                     Infos pratiques
                 </a>
@@ -18,7 +28,7 @@ const { currentPage } = Astro.props;
             <li>
                 <a 
                     href="/invites" 
-                    class={currentPage === 'invites' ? 'text-[#000000]' : 'hover:text-[#e63946]'}
+                    class={`transition-colors ${currentPage === 'invites' ? 'text-[#e63946] font-bold' : 'text-[#000000] hover:text-[#e63946]'}`}
                 >
                     Invités
                 </a>
@@ -26,11 +36,124 @@ const { currentPage } = Astro.props;
             <li>
                 <a 
                     href="/programme" 
-                    class={currentPage === 'programme' ? 'text-[#000000]' : 'hover:text-[#e63946]'}
+                    class={`transition-colors ${currentPage === 'programme' ? 'text-[#e63946] font-bold' : 'text-[#000000] hover:text-[#e63946]'}`}
                 >
                     Programme
                 </a>
             </li>
         </ul>
+
+        <!-- Menu Button Mobile -->
+        <button id="menu-btn" class="md:hidden flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+            <Image id="menu-icon-open" src={menuLogo} alt="Menu" class="h-6 w-auto" />
+            <Image id="menu-icon-close" src={menuCloseLogo} alt="Fermer" class="hidden h-6 w-auto" />
+        </button>
     </nav>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden bg-secondary fixed top-16 left-0 w-full min-h-[calc(100vh-4rem)] shadow-lg animate-slideDown">
+        <ul class="flex flex-col gap-0">
+            <li>
+                <a 
+                    href="/infos" 
+                    class={`block py-6 px-6 border-b border-opacity-20 transition-colors ${currentPage === 'infos' ? 'text-[#ffee00] font-bold bg-black bg-opacity-20' : 'text-white hover:bg-black hover:bg-opacity-20'}`}
+                >
+                    Infos pratiques
+                </a>
+            </li>
+            <li>
+                <a 
+                    href="/invites" 
+                    class={`block py-6 px-6 border-b border-opacity-20 transition-colors ${currentPage === 'invites' ? 'text-[#ffee00] font-bold bg-black bg-opacity-20' : 'text-white hover:bg-black hover:bg-opacity-20'}`}
+                >
+                    Invités
+                </a>
+            </li>
+            <li>
+                <a 
+                    href="/programme" 
+                    class={`block py-6 px-6 transition-colors ${currentPage === 'programme' ? 'text-[#ffee00] font-bold bg-black bg-opacity-20' : 'text-white hover:bg-black hover:bg-opacity-20'}`}
+                >
+                    Programme
+                </a>
+            </li>
+        </ul>
+    </div>
 </header>
+
+<style>
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-slideDown {
+        animation: slideDown 0.2s ease-out;
+    }
+</style>
+
+<script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mainHeader = document.getElementById('main-header');
+    const menuIconOpen = document.getElementById('menu-icon-open');
+    const menuIconClose = document.getElementById('menu-icon-close');
+    const logoDark = document.getElementById('logo-dark');
+    const logoLight = document.getElementById('logo-light');
+
+    // Toggle menu on button click
+    menuBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = mobileMenu?.classList.toggle('hidden');
+        
+        // Toggle header color and logo
+        if (isHidden) {
+            mainHeader?.classList.remove('bg-secondary');
+            mainHeader?.classList.add('bg-white');
+            menuIconOpen?.classList.remove('hidden');
+            menuIconClose?.classList.add('hidden');
+            logoDark?.classList.remove('hidden');
+            logoLight?.classList.add('hidden');
+        } else {
+            mainHeader?.classList.remove('bg-white');
+            mainHeader?.classList.add('bg-secondary');
+            menuIconOpen?.classList.add('hidden');
+            menuIconClose?.classList.remove('hidden');
+            logoDark?.classList.add('hidden');
+            logoLight?.classList.remove('hidden');
+        }
+    });
+
+    // Close menu when clicking on a link
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu?.classList.add('hidden');
+            mainHeader?.classList.remove('bg-secondary');
+            mainHeader?.classList.add('bg-white');
+            menuIconOpen?.classList.remove('hidden');
+            menuIconClose?.classList.add('hidden');
+            logoDark?.classList.remove('hidden');
+            logoLight?.classList.add('hidden');
+        });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        const isOutside = !menuBtn?.contains(e.target) && !mobileMenu?.contains(e.target);
+        if (isOutside && !mobileMenu?.classList.contains('hidden')) {
+            mobileMenu?.classList.add('hidden');
+            mainHeader?.classList.remove('bg-secondary');
+            mainHeader?.classList.add('bg-white');
+            menuIconOpen?.classList.remove('hidden');
+            menuIconClose?.classList.add('hidden');
+            logoDark?.classList.remove('hidden');
+            logoLight?.classList.add('hidden');
+        }
+    });
+</script>

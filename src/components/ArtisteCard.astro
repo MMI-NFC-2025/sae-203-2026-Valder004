@@ -1,43 +1,11 @@
-
 ---
-// Composant ArtisteCard - Carte d'un artiste
-const { artiste } = Astro.props;
-
-// Générer le lien vers la page de l'artiste
-const lien = `/invites/${artiste.slug || artiste.id}`;
-
-// Utiliser spécifiquement le champ "Photo"
-const photoFilename = artiste.Photo;
-const photoUrl = photoFilename 
-  ? `http://127.0.0.1:8090/api/files/${artiste.collectionId}/${artiste.id}/${photoFilename}`
-  : null;
-
-// Debug
-console.log('Artiste:', artiste.nom, 'Photo:', photoFilename, 'URL:', photoUrl);
-if (photoUrl) console.log('Image trouvée:', photoUrl);
+const { Artiste } = Astro.props;
+const lien = `/invites/${Artiste.slug || Artiste.id}`;
 ---
 
-<a href={lien} class="block bg-[#ffffff] overflow-hidden hover:opacity-90 transition-opacity">
-    <!-- Photo principale -->
-    {photoUrl ? (
-        <div class="w-full h-48 overflow-hidden bg-gray-900">
-            <img 
-                src={photoUrl} 
-                alt={artiste.nom} 
-                class="w-full h-full object-cover" 
-                loading="lazy"
-            />
-        </div>
-    ) : (
-        <div class="w-full h-48 bg-gradient-to-br from-[#000000] to-primary flex items-center justify-center">
-            <span class="text-white text-sm font-bold">{artiste.nom}</span>
-        </div>
-    )}
-    
-    <div class="p-6">
-        <p class="text-[#000000] text-sm mb-2">{artiste.date || artiste.jour}</p>
-        <h3 class="text-xl font-bold mb-2">{artiste.nom}</h3>
-        <p class="text-[#f4a261] text-sm mb-2">{artiste.genre_musical || artiste.genre}</p>
-        <p class="text-black text-sm line-clamp-2">{artiste.description}</p>
-    </div>
+<a href={lien} class="block bg-[#1a1a1a] p-4 md:p-6 hover:bg-[#252525] transition-colors">
+    <p class="text-[#e63946] text-xs md:text-sm mb-2">{Artiste.jour}</p>
+    <h3 class="text-lg md:text-xl font-bold mb-2">{Artiste.nom}</h3>
+    <p class="text-[#f4a261] text-xs md:text-sm mb-2">{Artiste.genre}</p>
+    <p class="text-gray-400 text-xs md:text-sm">{Artiste.description}</p>
 </a>

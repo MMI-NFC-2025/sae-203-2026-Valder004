@@ -9,7 +9,7 @@ const pb = new PocketBase('http://127.0.0.1:8090');
 // ============================================
 
 // Construire l'URL d'une image PocketBase
-export function getImageUrl(record, field, filename) {
+export function getImageUrl(record, filename) {
     if (!record || !filename) return null;
     return `${pb.baseUrl}/api/files/${record.id}/${filename}`;
 }
