@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { sendContactMessage } from '../../backend/backend.mjs';
+
+let success = false;
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+
+  const nom = form.get("nom");
+  const email = form.get("email");
+  const message = form.get("message");
+
+  try {
+    await sendContactMessage({ nom, email, message });
+    success = true;
+  } catch (err) {
+    console.error("Erreur envoi contact :", err);
+  }
+}
+---
+
+<Layout title="Contact - Jumelages">
+  <Header currentPage="contact" />
+
+  <main class="pt-24 px-4 pb-16 min-h-screen max-w-3xl mx-auto">
+
+    <h1 class="text-5xl font-bold text-center text-[#ffee00] mb-10">Contact</h1>
+
+    {success ? (
+      <div class="p-6 bg-green-600 text-white rounded-lg text-center">
+        Merci ! Votre message a bien été envoyé.
+      </div>
+    ) : (
+      <form method="POST" class="space-y-6">
+
+        <div>
+          <label class="block text-primary text-3xl mb-2">Nom</label>
+          <input type="text" name="nom" required
+            class="w-full p-3 rounded bg-[#1a1a1a] text-white border border-gray-700" />
+        </div>
+
+        <div>
+          <label class="block text-primary text-3xl mb-2">Email</label>
+          <input type="email" name="email" required
+            class="w-full p-3 rounded bg-[#1a1a1a] text-white border border-gray-700" />
+        </div>
+
+        <div>
+          <label class="block text-primary text-3xl mb-2">Message</label>
+          <textarea name="message" rows="6" required
+            class="w-full p-3 rounded bg-[#1a1a1a] text-white border border-gray-700"></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="bg-[#ff0000] hover:bg-[#f4a261] text-white px-6 py-3 rounded text-lg">
+          Envoyer
+        </button>
+
+      </form>
+    )}
+
+  </main>
+
+  <Footer />
+</Layout>

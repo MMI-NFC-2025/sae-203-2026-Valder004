@@ -160,3 +160,11 @@ export async function getAllScenes() {
     return [];
   }
 }
+export async function sendContactMessage(data) {
+  try {
+    return await pb.collection('contact').create(data);
+  } catch (error) {
+    console.error("Erreur PocketBase - sendContactMessage:", error);
+    throw error;
+  }
+}
