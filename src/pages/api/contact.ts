@@ -30,7 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Initialiser PocketBase
-    const pb = new PocketBase('http://127.0.0.1:8090');
+    const pb = new PocketBase('https://jumelage.valentin-deroo.fr');
 
     // Créer un enregistrement dans la collection "contact"
     const contactRecord = await pb.collection('contact').create({

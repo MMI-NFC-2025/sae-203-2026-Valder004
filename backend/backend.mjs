@@ -1,5 +1,5 @@
 import PocketBase from 'pocketbase'; 
-const pb = new PocketBase('http://127.0.0.1:8090');
+const pb = new PocketBase('https://jumelage.valentin-deroo.fr');
 
 export async function artistesSorted() { 
     const records = await pb.collection('Artiste').getFullList({ sort: 'date' }); 
@@ -36,7 +36,7 @@ export async function getAllArtistes() {
         const records = await pb.collection('Artiste').getFullList({ sort: 'nom' }); 
         console.log(`✓ ${records.length} artistes chargés de PocketBase`);
         
-        // Log première entrée pour vérifier la structure
+
         if (records.length > 0) {
             console.log('📋 Structure d\'un artiste:', {
                 id: records[0].id,
@@ -144,11 +144,11 @@ export function getImageUrl(record, imageName) {
     const collectionId = record.collectionId || record.collection || record.collectionName;
 
     if (!collectionId) {
-        console.error("❌ Impossible de déterminer collectionId pour :", record);
+        console.error("Impossible de déterminer collectionId pour :", record);
         return null;
     }
 
-    return `http://127.0.0.1:8090/api/files/${collectionId}/${record.id}/${imageName}`;
+    return `https://jumelage.valentin-deroo.fr/api/files/${collectionId}/${record.id}/${imageName}`;
 }
 export async function getAllScenes() {
   try {
