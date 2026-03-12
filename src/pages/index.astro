@@ -3,9 +3,8 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import SceneCard from '../components/SceneCard.astro';
-import Pbimg from '../components/Pbimg.astro';
 import Hero from '../components/Hero.astro';
+
 
 ---
 
@@ -14,20 +13,19 @@ import Hero from '../components/Hero.astro';
     <Header currentPage="accueil" />
     <Hero />
     <!-- HERO -->
-    <section class=" flex flex-col  items-center text-center pt-20">
+    <section class=" flex flex-col pb-8 items-center text-center pt-20">
 
         <h1 class="text-4xl font-bold mb-12">29 - 30 Août</h1>
         <a href="/programme" class="bg-[#ff0000] text-white px-8 py-4 text-xl hover:bg-[#f4a261]">
-            Voir le programme
+            Billeterie
         </a>
-    </section>
 
-    <!-- LES SCENES -->
-    <section class="py-20 px-4 bg-[#ffffff]">
-        <h2 class="text-4xl font-bold text-center mb-12">Les Scènes</h2>
-        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-            <SceneCard nom="Le Kiosque" description="Scène principale en plein air" couleur="#e63946" />
-            <SceneCard nom="Le Pavillon" description="Scène intimiste couverte" couleur="#f4a261" />
+
+    </section>
+  </div>
+</section>
+
+
         </div>
     </section>
 

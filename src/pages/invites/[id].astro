@@ -16,57 +16,39 @@ const artiste = await pb.collection('Artiste').getOne(id);
 
 <html lang="fr">
 <Layout/>
-        <Header />
+<Header />
 
-  <body class="bg-[#1a1a1a] text-white p-6">
+<body class="bg-[#1a1a1a] text-white p-6">
 
+  <h1 class="text-3xl font-bold mt-4 pt-16">{artiste.nom}</h1>
+  <p class="text-[#f4a261] text-lg mt-1">{artiste.genre_musical}</p>
 
-    <h1 class="text-3xl font-bold mt-4 pt-16">{artiste.nom}</h1>
-    <p class="text-[#f4a261] text-lg mt-1">{artiste.genre_musical}</p>
+  <!-- Image principale -->
+  {artiste.photo && (
+    <div class="mt-6 w-full max-w-xl">
+      <Pbimg 
+        record={artiste}
+        imageName={artiste.photo}
+        alt={artiste.nom}
+        width="100%"
+        height="auto"
+        class="rounded-lg"
+      />
+    </div>
+  )}
 
-    <!-- Image principale -->
-    {artiste.photo && (
-      <div class="mt-6 w-full max-w-xl">
-        <Pbimg 
-          record={artiste}
-          imageName={artiste.photo}
-          alt={artiste.nom}
-          width="100%"
-          height="auto"
-          class="rounded-lg"
-        />
-      </div>
-    )}
+  <p class="mt-4 text-gray-300 leading-relaxed">
+    {artiste.description}
+  </p>
 
-    <p class="mt-4 text-gray-300 leading-relaxed">
-      {artiste.description}
-    </p>
+  <!-- CARROUSEL UNIQUEMENT -->
+  {artiste.galerie?.length > 0 && (
+    <Carousel 
+      record={artiste}
+      images={artiste.galerie}
+      alt={`Galerie - ${artiste.nom}`}
+    />
+  )}
 
-
-
-        <div class="grid grid-cols-3 gap-3">
-          {artiste.galerie.map((img) => (
-            <Pbimg 
-              record={artiste}
-              imageName={img}
-              alt={`Galerie - ${artiste.nom}`}
-              class="rounded object-cover"
-              width="100%"
-              height="100%"
-            />
-          ))}
-        </div>
-      </div>
-
-
-{artiste.galerie?.length > 0 && (
-  <Carousel 
-    record={artiste}
-    images={artiste.galerie}
-    alt={`Galerie - ${artiste.nom}`}
-  />
-)}
-
-  </body>
-  <Footer/>
+</body>
 </html>

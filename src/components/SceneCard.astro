@@ -1,10 +1,65 @@
 ---
-// Composant SceneCard - Carte d'une scène
-const { nom, description, couleur = '#e63946' } = Astro.props;
 import Pbimg from "./Pbimg.astro";
+
+interface Props {
+  Scene: {
+    id: string;
+    nom: string;
+    description?: string;
+    localisation?: string;
+    photo?: string;
+    capacite?: number;
+  };
+}
+
+const { Scene } = Astro.props;
+
+// Sécurité : si Scene est undefined, on ne casse pas la page
+if (!Scene) {
+  console.warn("⚠️ SceneCard reçu undefined");
+}
+const lien = Scene ? `/scenes/${Scene.id}` : "#";
 ---
 
-<div class="bg-[#0a0a0a] p-8 text-center">
-    <h3 class="text-2xl font-bold mb-4" style={`color: ${couleur}`}>{nom}</h3>
-    <p class="text-gray-400">{description}</p>
-</div>
+<a
+  href={lien}
+  class="block rounded-lg overflow-hidden bg-[#1a1a1a] hover:bg-[#252525] transition-all duration-300 border border-gray-800 hover:border-gray-700 group"
+>
+
+  {Scene?.photo && (
+    <div class="relative w-full h-48 md:h-56 overflow-hidden bg-gray-900">
+      <Pbimg
+        record={Scene}
+        imageName={Scene.photo}
+        alt={Scene.nom}
+        width="100%"
+        height="100%"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  )}
+
+  <div class="p-4 md:p-5">
+    <h3 class="text-lg md:text-xl font-bold text-white mb-1 group-hover:text-[#ffee00] transition-colors">
+      {Scene?.nom}
+    </h3>
+
+    {Scene?.localisation && (
+      <p class="text-[#f4a261] text-sm font-medium mb-2">
+        📍 {Scene.localisation}
+      </p>
+    )}
+
+    {Scene?.description && (
+      <p class="text-gray-300 text-xs md:text-sm line-clamp-2 mb-3">
+        {Scene.description}
+      </p>
+    )}
+
+    {Scene?.capacite && (
+      <p class="text-gray-400 text-xs font-medium">
+        Capacité : {Scene.capacite} personnes
+      </p>
+    )}
+  </div>
+</a>

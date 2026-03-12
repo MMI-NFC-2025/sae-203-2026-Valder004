@@ -150,3 +150,13 @@ export function getImageUrl(record, imageName) {
 
     return `http://127.0.0.1:8090/api/files/${collectionId}/${record.id}/${imageName}`;
 }
+export async function getAllScenes() {
+  try {
+    return await pb.collection('Scene').getFullList({
+      sort: 'nom'
+    });
+  } catch (error) {
+    console.error("Erreur PocketBase - getAllScenes:", error);
+    return [];
+  }
+}
