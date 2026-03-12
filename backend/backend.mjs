@@ -2,18 +2,18 @@ import PocketBase from 'pocketbase';
 const pb = new PocketBase('http://127.0.0.1:8090');
 
 export async function artistesSorted() { 
-    const records = await pb.collection('Artiste').getFullList({ sort: 'Date' }); 
+    const records = await pb.collection('Artiste').getFullList({ sort: 'date' }); 
     return records; 
 }
 
 export async function scenesName() { 
-    const records = await pb.collection('Scene').getFullList({ sort: 'Nom' }); 
+    const records = await pb.collection('Scene').getFullList({ sort: 'nom' }); 
     return records; 
 }
 
 export async function getAllScenes() {
     try {
-        const records = await pb.collection('Scene').getFullList({ sort: 'Nom' });
+        const records = await pb.collection('Scene').getFullList({ sort: 'nom' });
         return records;
     } catch (error) {
         console.error('Erreur PocketBase - getAllScenes:', {
@@ -27,13 +27,28 @@ export async function getAllScenes() {
 }
 
 export async function artistesName() { 
-    const records = await pb.collection('Artiste').getFullList({ sort: 'Nom' }); 
+    const records = await pb.collection('Artiste').getFullList({ sort: 'nom' }); 
     return records; 
 }
 
 export async function getAllArtistes() { 
     try {
-        const records = await pb.collection('Artiste').getFullList({ sort: 'Nom' }); 
+        const records = await pb.collection('Artiste').getFullList({ sort: 'nom' }); 
+        console.log(`✓ ${records.length} artistes chargés de PocketBase`);
+        
+        // Log première entrée pour vérifier la structure
+        if (records.length > 0) {
+            console.log('📋 Structure d\'un artiste:', {
+                id: records[0].id,
+                nom: records[0].nom,
+                genre_musical: records[0].genre_musical,
+                photo: records[0].photo,
+                galerie: records[0].galerie,
+                date: records[0].date,
+                description: records[0].description
+            });
+        }
+        
         return records;
     } catch (error) {
         console.error('Erreur PocketBase - getAllArtistes:', {
@@ -70,13 +85,13 @@ export async function sceneID(id) {
 }
 
 export async function allartistebysceneId(id) { 
-    const records = await pb.collection('Artiste').getFullList({ filter: scene="${id}", sort: 'Date' }); 
+    const records = await pb.collection('Artiste').getFullList({ filter: `Scene = "${id}"`, sort: 'date' }); 
     return records; 
 }
 
 export async function allartistebysceneName(nom) {
-    const scene = await pb.collection('Scene').getFirstListItem(nom="${nom}");
-    const records = await pb.collection('Artiste').getFullList({ filter: scene="${scene.id}", sort: 'Date' }); 
+    const scene = await pb.collection('Scene').getFirstListItem(`nom = "${nom}"`);
+    const records = await pb.collection('Artiste').getFullList({ filter: `Scene = "${scene.id}"`, sort: 'date' }); 
     return records; 
 }
 export async function addArtiste(artisteData) {
@@ -125,5 +140,13 @@ export async function updateScene(id, sceneData) {
 
 export function getImageUrl(record, imageName) {
     if (!record || !imageName) return null;
-    return `http://127.0.0.1:8090/api/files/${record.id}/${imageName}`;
+
+    const collectionId = record.collectionId || record.collection || record.collectionName;
+
+    if (!collectionId) {
+        console.error("❌ Impossible de déterminer collectionId pour :", record);
+        return null;
+    }
+
+    return `http://127.0.0.1:8090/api/files/${collectionId}/${record.id}/${imageName}`;
 }

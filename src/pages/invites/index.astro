@@ -4,11 +4,12 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ArtisteCard from '../../components/ArtisteCard.astro';
 import { getAllArtistes } from '../../../backend/backend.mjs';
+import Pbimg from '../../components/Pbimg.astro';
 
-let artiste = [];
+let Artiste = [];
 try {
-  artiste = await getAllArtistes();
-  console.log(`✓ PocketBase: ${artiste.length} artistes chargés`);
+  Artiste = await getAllArtistes();
+  console.log(`✓ PocketBase: ${Artiste.length} artistes chargés`);
 } catch (error) {
   console.error('Erreur lors du chargement des artistes:', error);
 }
@@ -18,22 +19,37 @@ try {
 
     <Header currentPage="invites" />
      
-    <main class="pt-24 px-4 min-h-screen">
-        <h1 class="text-5xl font-bold text-center text-[#ffee00] mb-12">Les Invités</h1>
-            
-        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            {artiste.map((Artiste: any) => (
-                <ArtisteCard Artiste={Artiste} />
-            ))}
+    <main class="pt-24 px-4 pb-16 min-h-screen ">
+        <!-- Header section -->
+        <div class="max-w-7xl mx-auto mb-16">
+            <h1 class="text-5xl md:text-6xl font-bold text-center text-[#ffee00] mb-4">Les Invités</h1>
+            <p class="text-center text-gray-400 text-lg">Découvrez les artistes présents au festival Jumelages</p>
+        </div>
 
-            <!-- Message si aucun artiste -->
-            {artiste.length === 0 && (
-                <p class="text-gray-400 text-center col-span-3">
-                    Aucun artiste pour le moment. La programmation arrive bientôt !
-                </p>
+        <!-- Grille responsive -->
+        <div class="max-w-7xl mx-auto">
+            {Artiste.length > 0 ? (
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
+                    {Artiste.map((Artiste: any, index: number) => (
+                        <div 
+                            class="animate-fadeIn"
+                            style={{
+                                animationDelay: `${index * 0.1}s`
+                            }}
+                        >
+                            <ArtisteCard Artiste={Artiste} />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div class="col-span-full">
+                    <div class=" border rounded-lg p-12 text-center">
+                        <p class="text-gray-400 text-lg">
+                            Aucun artiste pour le moment. La programmation arrive bientôt !
+                        </p>
+                    </div>
+                </div>
             )}
-            
         </div>
     </main>
 

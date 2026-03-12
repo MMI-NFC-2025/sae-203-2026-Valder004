@@ -1,88 +1,86 @@
 ---
-import { getImageUrl } from "../../backend/backend.mjs";
+import Pbimg from "./Pbimg.astro";
 
 interface Props {
     Artiste: {
-        id?: string;
-        Slug?: string;
-        Date?: string;
-        Nom: string;
-        Genre: string;
-        Description: string;
-        Photo?: string;
-        Galerie?: string[];
+        id: string;
+        nom: string;
+        genre_musical: string;
+        description: string;
+        photo?: string;
+        galerie?: string[];
+        date?: string;
     };
 }
 
-const { Artiste } = Astro.props as Props;
-const lien = `/Artiste/${Artiste.Slug || Artiste.id}`;
-
-// Récupérer l'URL de la photo
-const photoUrl = getImageUrl(Artiste, Artiste?.Photo);
-
-// Récupérer les URLs de la galerie
-const galerieUrls =
-    Artiste?.Galerie &&
-    Array.isArray(Artiste.Galerie) &&
-    Artiste.Galerie.length > 0
-        ? Artiste.Galerie.map((filename) => getImageUrl(Artiste, filename))
-        : [];
+const { Artiste } = Astro.props;
+const lien = `/invites/${Artiste.id}`;
 ---
 
 <a
     href={lien}
-    class="block rounded-lg overflow-hidden hover:bg-[#252525] transition-colors"
+    class="block rounded-lg overflow-hidden bg-[#1a1a1a] hover:bg-[#252525] transition-all duration-300 border border-gray-800 hover:border-gray-700 group"
 >
-    <!-- Image de la photo -->
-    {
-        photoUrl && (
-            <div class="w-full h-48 md:h-56 overflow-hidden bg-gray-900">
-                <img
-                    src={photoUrl}
-                    alt={Artiste.Photo}
-                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                />
-            </div>
-        )
-    }
+    <!-- Image principale -->
+    {Artiste.photo && (
+        <div class="relative w-full h-48 md:h-56 overflow-hidden bg-gray-900">
+            <Pbimg 
+                record={Artiste}
+                imageName={Artiste.photo}
+                alt={Artiste.nom}
+                width="100%"
+                height="100%"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
 
-    <!-- Contenu de la card -->
-    <div class="p-4 md:p-6">
-        {
-            Artiste.Date && (
-                <p class="text-[#e63946] text-xs md:text-sm mb-2">
-                    {Artiste.Date}
-                </p>
-            )
-        }
-        <h3 class="text-lg md:text-xl font-bold mb-2">{Artiste.Nom}</h3>
-        <p class="text-[#f4a261] text-xs md:text-sm mb-2">{Artiste.Genre}</p>
-        <p class="text-gray-400 text-xs md:text-sm line-clamp-2">
-            {Artiste.Description}
+            {Artiste.date && (
+                <div class="absolute top-3 right-3 bg-[#e63946] text-white px-3 py-1 rounded-md text-xs md:text-sm font-semibold shadow-lg">
+                    {Artiste.date}
+                </div>
+            )}
+        </div>
+    )}
+
+    <!-- Contenu -->
+    <div class="p-4 md:p-5">
+        <h3 class="text-lg md:text-xl font-bold text-white mb-1 group-hover:text-[#ffee00] transition-colors">
+            {Artiste.nom}
+        </h3>
+        <p class="text-[#f4a261] text-sm font-medium mb-2">
+            {Artiste.genre_musical}
+        </p>
+        <p class="text-gray-300 text-xs md:text-sm line-clamp-2 mb-3">
+            {Artiste.description}
         </p>
     </div>
 
-    <!-- Aperçu galerie -->
-    {
-        galerieUrls.length > 0 && (
-            <div class="px-4 pb-4 md:px-6 md:pb-6">
-                <div class="grid grid-cols-3 gap-2">
-                    {galerieUrls.slice(0, 3).map((url) => (
-                        <div class="w-full aspect-square overflow-hidden rounded bg-gray-800">
-                            <img
-                                src={url}
-                                alt="Galerie"
-                                class="w-full h-full object-cover"
-                            />
-                        </div>
-                    ))}
-                </div>
-                {galerieUrls.length > 3 && (
-                    <p class="text-gray-400 text-xs mt-2 text-center">
-                        +{galerieUrls.length - 3} images
-                    </p>
-                )}
+    <!-- Galerie -->
+    {Artiste.galerie?.length > 0 && (
+        <div class="px-4 pb-4 md:px-5 md:pb-5 border-t border-gray-800">
+            <p class="text-gray-400 text-xs mb-2 font-medium">
+                Galerie ({Artiste.galerie.length} images)
+            </p>
+
+            <div class="grid grid-cols-3 gap-2">
+                {Artiste.galerie.slice(0, 3).map((filename) => (
+                    <div class="w-full aspect-square overflow-hidden rounded bg-gray-800 group-hover:opacity-80 transition-opacity">
+                        <Pbimg 
+                            record={Artiste}
+                            imageName={filename}
+                            alt={`Galerie - ${Artiste.nom}`}
+                            width="100%"
+                            height="100%"
+                            class="w-full h-full object-cover"
+                        />
+                    </div>
+                ))}
             </div>
-        )
-    }
+
+            {Artiste.galerie.length > 3 && (
+                <p class="text-gray-400 text-xs mt-2 text-center font-medium">
+                    +{Artiste.galerie.length - 3} images
+                </p>
+            )}
+        </div>
+    )}
 </a>

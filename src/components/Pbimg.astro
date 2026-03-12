@@ -1,7 +1,23 @@
 ---
 import { getImageUrl } from '../../backend/backend.mjs';
 
-const { record, imageName, alt = 'Image', width = '100%', height = 'auto' } = Astro.props;
+interface Props {
+    record: any;
+    imageName: string; // obligatoire pour éviter les ambiguïtés
+    alt?: string;
+    width?: string;
+    height?: string;
+    class?: string;
+}
+
+const { 
+    record, 
+    imageName,
+    alt = 'Image', 
+    width = '100%', 
+    height = 'auto', 
+    class: className 
+} = Astro.props as Props;
 
 const imageURL = getImageUrl(record, imageName);
 ---
@@ -9,8 +25,8 @@ const imageURL = getImageUrl(record, imageName);
 {imageURL && 
     <img
         src={imageURL}
-        alt={alt || record?.Nom || 'Image'}
+        alt={alt}
         style={`width: ${width}; height: ${height}; object-fit: cover;`}
-        class="rounded transition-transform hover:scale-105"
+        class={className || "rounded transition-transform hover:scale-105"}
     />
 }

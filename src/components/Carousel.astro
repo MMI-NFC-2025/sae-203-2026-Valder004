@@ -1,0 +1,108 @@
+---
+interface Props {
+  record: any;
+  images: string[];
+  alt?: string;
+}
+
+const { record, images, alt = "Image" } = Astro.props;
+import { getImageUrl } from "../../backend/backend.mjs";
+
+---
+
+<div class="carousel">
+  <div class="carousel-track" id="carousel-track">
+    {images.map((img) => (
+      <div class="carousel-slide">
+        <img
+          src={getImageUrl(record, img)}
+          alt={alt}
+          class="carousel-img"
+        />
+      </div>
+    ))}
+  </div>
+
+  <button class="carousel-btn prev" id="carousel-prev">‹</button>
+  <button class="carousel-btn next" id="carousel-next">›</button>
+</div>
+
+<style>
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+  margin: 20px auto;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.4s ease;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-img {
+  width: 100%;
+  height: auto;
+  max-height: 70vh; /* empêche l’image d’être trop grande */
+  object-fit: contain; /* ne coupe plus l’image */
+  border-radius: 12px;
+}
+
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(20, 20, 20, 0.6);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.carousel-btn:hover {
+  background: rgba(20, 20, 20, 0.9);
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+</style>
+
+<script>
+const track = document.getElementById("carousel-track");
+const btnPrev = document.getElementById("carousel-prev");
+const btnNext = document.getElementById("carousel-next");
+
+let index = 0;
+
+function updateCarousel() {
+  track.style.transform = `translateX(-${index * 100}%)`;
+}
+
+btnNext.addEventListener("click", () => {
+  index = (index + 1) % track.children.length;
+  updateCarousel();
+});
+
+btnPrev.addEventListener("click", () => {
+  index = (index - 1 + track.children.length) % track.children.length;
+  updateCarousel();
+});
+</script>
