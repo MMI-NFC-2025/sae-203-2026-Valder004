@@ -13,8 +13,7 @@ export const POST: APIRoute = async ({ request }) => {
     const data = await request.json();
     const { nom, email, sujet, message } = data;
 
-    if (!nom  !email 
- !sujet || !message) {
+    if (!nom || !email || !sujet || !message) {
       return new Response(
         JSON.stringify({ error: 'Tous les champs sont requis' }),
         { status: 400 }
