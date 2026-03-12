@@ -11,20 +11,7 @@ export async function scenesName() {
     return records; 
 }
 
-export async function getAllScenes() {
-    try {
-        const records = await pb.collection('Scene').getFullList({ sort: 'nom' });
-        return records;
-    } catch (error) {
-        console.error('Erreur PocketBase - getAllScenes:', {
-            status: error.status,
-            message: error.message,
-            url: error.url,
-            response: error.response
-        });
-        throw error;
-    }
-}
+
 
 export async function artistesName() { 
     const records = await pb.collection('Artiste').getFullList({ sort: 'nom' }); 
