@@ -5,7 +5,13 @@ import Footer from '../../components/Footer.astro';
 import ArtisteCard from '../../components/ArtisteCard.astro';
 import { getAllArtistes } from '../../../backend/backend.mjs';
 
-const artiste = await getAllArtistes();
+let artiste = [];
+try {
+  artiste = await getAllArtistes();
+  console.log(`✓ PocketBase: ${artiste.length} artistes chargés`);
+} catch (error) {
+  console.error('Erreur lors du chargement des artistes:', error);
+}
 ---
 
 <Layout title="Invités - Jumelages">
@@ -17,8 +23,8 @@ const artiste = await getAllArtistes();
             
         <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            {artiste.map((artiste: any) => (
-                <ArtisteCard Artiste={artiste} />
+            {artiste.map((Artiste: any) => (
+                <ArtisteCard Artiste={Artiste} />
             ))}
 
             <!-- Message si aucun artiste -->

@@ -2,28 +2,66 @@ import PocketBase from 'pocketbase';
 const pb = new PocketBase('http://127.0.0.1:8090');
 
 export async function artistesSorted() { 
-    const records = await pb.collection('Artiste').getFullList({ sort: 'date_de_representation' }); 
+    const records = await pb.collection('Artiste').getFullList({ sort: 'Date' }); 
     return records; 
 }
 
 export async function scenesName() { 
-    const records = await pb.collection('Scene').getFullList({ sort: 'nom' }); 
+    const records = await pb.collection('Scene').getFullList({ sort: 'Nom' }); 
     return records; 
 }
 
+export async function getAllScenes() {
+    try {
+        const records = await pb.collection('Scene').getFullList({ sort: 'Nom' });
+        return records;
+    } catch (error) {
+        console.error('Erreur PocketBase - getAllScenes:', {
+            status: error.status,
+            message: error.message,
+            url: error.url,
+            response: error.response
+        });
+        throw error;
+    }
+}
+
 export async function artistesName() { 
-    const records = await pb.collection('Artiste').getFullList({ sort: 'nom' }); 
+    const records = await pb.collection('Artiste').getFullList({ sort: 'Nom' }); 
     return records; 
 }
 
 export async function getAllArtistes() { 
-    const records = await pb.collection('Artiste').getFullList({ sort: 'nom' }); 
-    return records; 
+    try {
+        const records = await pb.collection('Artiste').getFullList({ sort: 'Nom' }); 
+        return records;
+    } catch (error) {
+        console.error('Erreur PocketBase - getAllArtistes:', {
+            status: error.status,
+            message: error.message,
+            url: error.url,
+            response: error.response
+        });
+        throw error;
+    }
+}
+
+export async function getArtisteById(id) { 
+    try {
+        const record = await pb.collection('Artiste').getOne(id);
+        return record;
+    } catch (error) {
+        console.error('Erreur PocketBase - getArtisteById:', {
+            id,
+            status: error.status,
+            message: error.message
+        });
+        throw error;
+    }
 }
 
 export async function artisteID(id) { 
-    const record = await pb.collection('Artiste').getOne(id); 
-    return record; 
+    return getArtisteById(id);
 }
 
 export async function sceneID(id) { 
@@ -32,13 +70,13 @@ export async function sceneID(id) {
 }
 
 export async function allartistebysceneId(id) { 
-    const records = await pb.collection('Artiste').getFullList({ filter: scene="${id}", sort: 'date_de_representation' }); 
+    const records = await pb.collection('Artiste').getFullList({ filter: scene="${id}", sort: 'Date' }); 
     return records; 
 }
 
 export async function allartistebysceneName(nom) {
     const scene = await pb.collection('Scene').getFirstListItem(nom="${nom}");
-    const records = await pb.collection('Artiste').getFullList({ filter: scene="${scene.id}", sort: 'date_de_representation' }); 
+    const records = await pb.collection('Artiste').getFullList({ filter: scene="${scene.id}", sort: 'Date' }); 
     return records; 
 }
 export async function addArtiste(artisteData) {
@@ -83,4 +121,9 @@ export async function updateScene(id, sceneData) {
         console.error("Erreur lors de la modification de la scène :", error);
         throw error;
     }
+}
+
+export function getImageUrl(record, imageName) {
+    if (!record || !imageName) return null;
+    return `http://127.0.0.1:8090/api/files/${record.id}/${imageName}`;
 }

@@ -1,16 +1,16 @@
 ---
 import { getImageUrl } from '../../backend/backend.mjs';
-import { Image } from "astro:assets";
 
-const { record, recordImage, imageField, width = 400, height= 300 } = Astro.props;
+const { record, imageName, alt = 'Image', width = '100%', height = 'auto' } = Astro.props;
 
-const imageURL = getImageUrl(record, recordImage);
+const imageURL = getImageUrl(record, imageName);
 ---
 
 {imageURL && 
-    <Image
+    <img
         src={imageURL}
-        alt={record.nom || 'Image'}
-        inferSize={true}
+        alt={alt || record?.Nom || 'Image'}
+        style={`width: ${width}; height: ${height}; object-fit: cover;`}
+        class="rounded transition-transform hover:scale-105"
     />
 }

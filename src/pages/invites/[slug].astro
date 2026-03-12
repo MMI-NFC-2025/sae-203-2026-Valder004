@@ -3,16 +3,22 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { getAllArtistes, getArtisteBySlug, getArtisteById } from '../../../backend/backend.mjs';
+import { getAllArtistes } from '../../../backend/backend.mjs';
 
 // Génération des pages statiques
 export async function getStaticPaths() {
-    const artistes = await getAllArtistes();
-    
-    return artistes.map((artiste) => ({
-        params: { slug: artiste.slug || artiste.id },
-        props: { artiste },
-    }));
+    try {
+        const artistes = await getAllArtistes();
+        console.log(`✓ PocketBase: ${artistes.length} routes générées pour [slug]`);
+        
+        return artistes.map((artiste) => ({
+            params: { slug: artiste.slug || artiste.id },
+            props: { artiste },
+        }));
+    } catch (error) {
+        console.error('Erreur lors de la génération des pages statiques:', error);
+        return [];
+    }
 }
 
 // Récupérer l'artiste
@@ -20,13 +26,16 @@ const { slug } = Astro.params;
 const { artiste } = Astro.props;
 
 // Construire les URLs des images
-const photoUrl = artiste.photo ? `http://127.0.0.1:8090/api/files/${artiste.id}/${artiste.photo}` : null;
-const galerieUrls = artiste.galerie && artiste.galerie.length > 0 
+const photoUrl = artiste?.photo 
+    ? `http://127.0.0.1:8090/api/files/${artiste.id}/${artiste.photo}` 
+    : null;
+
+const galerieUrls = artiste?.galerie && Array.isArray(artiste.galerie) && artiste.galerie.length > 0 
     ? artiste.galerie.map(filename => `http://127.0.0.1:8090/api/files/${artiste.id}/${filename}`)
     : [];
 ---
 
-<Layout title={`${artiste.nom} - Jumelages`}>
+<Layout title={`${artiste.Nom} - Jumelages`}>
 
     <Header currentPage="invites" />
 
@@ -45,18 +54,18 @@ const galerieUrls = artiste.galerie && artiste.galerie.length > 0
             <!-- Section photo principale -->
             {photoUrl && (
                 <div class="mb-8 overflow-hidden rounded-lg bg-gray-900">
-                    <img src={photoUrl} alt={artiste.nom} class="w-full h-96 object-cover" />
+                    <img src={photoUrl} alt={artiste.Nom} class="w-full h-96 object-cover" />
                 </div>
             )}
 
             <div class="bg-[#1a1a1a] p-8">
                 
-                <p class="text-[#e63946] text-lg mb-2">{artiste.date || artiste.jour}</p>
-                <h1 class="text-5xl font-bold mb-4">{artiste.nom}</h1>
-                <p class="text-[#f4a261] text-xl mb-6">{artiste.genre_musical || artiste.genre}</p>
+                <p class="text-[#e63946] text-lg mb-2">{artiste?.jour || artiste?.Date || 'À confirmer'}</p>
+                <h1 class="text-5xl font-bold mb-4">{artiste?.Nom}</h1>
+                <p class="text-[#f4a261] text-xl mb-6">{artiste?.genre || artiste?.Genre_musical || 'À confirmer'}</p>
                 
                 <div class="mb-6">
-                    <p class="text-gray-300 text-lg">{artiste.description}</p>
+                    <p class="text-gray-300 text-lg">{artiste?.description || 'Aucune description disponible'}</p>
                 </div>
 
                 <!-- Infos supplémentaires -->
@@ -64,12 +73,12 @@ const galerieUrls = artiste.galerie && artiste.galerie.length > 0
                     
                     <div>
                         <p class="text-gray-500 text-sm">Scène</p>
-                        <p class="text-white text-lg">{artiste.scene || 'À confirmer'}</p>
+                        <p class="text-white text-lg">{artiste?.Scene || 'À confirmer'}</p>
                     </div>
                     
                     <div>
                         <p class="text-gray-500 text-sm">Horaire</p>
-                        <p class="text-white text-lg">{artiste.heure || 'À confirmer'}</p>
+                        <p class="text-white text-lg">{artiste?.heure || 'À confirmer'}</p>
                     </div>
                     
                 </div>
@@ -77,13 +86,13 @@ const galerieUrls = artiste.galerie && artiste.galerie.length > 0
             </div>
 
             <!-- Section galerie -->
-            {galerieUrls.length > 0 && (
+            {galerieUrls && galerieUrls.length > 0 && (
                 <div class="mt-12">
                     <h2 class="text-3xl font-bold mb-6 text-[#e63946]">Galerie</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {galerieUrls.map((url, index) => (
                             <div class="overflow-hidden rounded-lg bg-gray-900 hover:opacity-90 transition-opacity">
-                                <img src={url} alt={`${artiste.nom} - Image ${index + 1}`} class="w-full h-64 object-cover" />
+                                <img src={url} alt={`${artiste?.Nom || 'Artiste'} - Image ${index + 1}`} class="w-full h-64 object-cover" />
                             </div>
                         ))}
                     </div>

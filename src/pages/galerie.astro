@@ -1,0 +1,153 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getAllArtistes, getAllScenes, getImageUrl } from '../../backend/backend.mjs';
+
+let artistes = [];
+let scenes = [];
+try {
+  artistes = await getAllArtistes();
+  scenes = await getAllScenes();
+  console.log(`✓ PocketBase: ${artistes.length} artistes et ${scenes.length} scènes chargés`);
+} catch (error) {
+  console.error('Erreur lors du chargement des images:', error);
+}
+
+// Construire toutes les images des artistes
+const artistesImages = artistes.flatMap((artiste) => {
+  const images = [];
+  
+  // Ajouter la photo principale
+  if (artiste.Photo) {
+    images.push({
+      url: getImageUrl(artiste, artiste.Photo),
+      name: artiste.Nom,
+      slug: artiste.Slug || artiste.id,
+      type: 'photo',
+      category: 'Artiste',
+      id: artiste.id
+    });
+  }
+  
+  // Ajouter les images de galerie
+  if (artiste.Galerie && Array.isArray(artiste.Galerie)) {
+    artiste.Galerie.forEach((filename) => {
+      images.push({
+        url: getImageUrl(artiste, filename),
+        name: artiste.Nom,
+        slug: artiste.Slug || artiste.id,
+        type: 'galerie',
+        category: 'Artiste',
+        id: artiste.id
+      });
+    });
+  }
+  
+  return images;
+});
+
+// Construire toutes les images des scènes
+const scenesImages = scenes.flatMap((scene) => {
+  const images = [];
+  
+  // Ajouter la photo principale
+  if (scene.Photo) {
+    images.push({
+      url: getImageUrl(scene, scene.Photo),
+      name: scene.Nom,
+      slug: scene.Slug || scene.id,
+      type: 'photo',
+      category: 'Scène',
+      id: scene.id
+    });
+  }
+  
+  // Ajouter les images de galerie
+  if (scene.Galerie && Array.isArray(scene.Galerie)) {
+    scene.Galerie.forEach((filename) => {
+      images.push({
+        url: getImageUrl(scene, filename),
+        name: scene.Nom,
+        slug: scene.Slug || scene.id,
+        type: 'galerie',
+        category: 'Scène',
+        id: scene.id
+      });
+    });
+  }
+  
+  return images;
+});
+
+// Fusionner toutes les images
+const allImages = [...artistesImages, ...scenesImages];
+
+<Layout title="Galerie - Jumelages">
+    <Header currentPage="galerie" />
+    
+    <main class="pt-24 px-4 min-h-screen">
+        <h1 class="text-5xl font-bold text-center text-[#ffee00] mb-12">Galerie Complète</h1>
+        
+        {allImages.length === 0 ? (
+            <div class="max-w-4xl mx-auto text-center">
+                <p class="text-gray-400 text-lg">Aucune image disponible pour le moment.</p>
+            </div>
+        ) : (
+            <div class="max-w-7xl mx-auto">
+                <!-- Grille galerie -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    {allImages.map((image) => {
+                        const href = image.category === 'Artiste' ? `/invites/${image.slug}` : `#`;
+                        return (
+                            <a 
+                                href={href}
+                                class="group relative overflow-hidden rounded-lg bg-gray-900 hover:shadow-lg transition-all duration-300"
+                            >
+                                <div class="aspect-square overflow-hidden bg-gray-800">
+                                    <img 
+                                        src={image.url} 
+                                        alt={`${image.name}`}
+                                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                        loading="lazy"
+                                    />
+                                </div>
+                                
+                                <!-- Overlay au hover -->
+                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-end">
+                                    <div class="w-full p-4 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                                        <p class="text-white font-bold text-lg">{image.name}</p>
+                                        <div class="flex justify-between items-center mt-1">
+                                            <p class="text-gray-300 text-sm capitalize">{image.category}</p>
+                                            <p class="text-gray-400 text-xs">{image.type}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        );
+                    })}
+                </div>
+                
+                <!-- Statistiques -->
+                <div class="max-w-4xl mx-auto bg-[#1a1a1a] p-8 rounded-lg border border-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                        <div>
+                            <p class="text-gray-400 text-sm mb-2">Total d'images</p>
+                            <p class="text-[#ffee00] font-bold text-3xl">{allImages.length}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm mb-2">Images d'artistes</p>
+                            <p class="text-[#f4a261] font-bold text-3xl">{artistesImages.length}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm mb-2">Images de scènes</p>
+                            <p class="text-[#e63946] font-bold text-3xl">{scenesImages.length}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
+    </main>
+    
+    <Footer />
+</Layout>

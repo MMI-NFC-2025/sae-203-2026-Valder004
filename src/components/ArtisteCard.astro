@@ -1,11 +1,88 @@
 ---
-const { Artiste } = Astro.props;
-const lien = `/invites/${Artiste.slug || Artiste.id}`;
+import { getImageUrl } from "../../backend/backend.mjs";
+
+interface Props {
+    Artiste: {
+        id?: string;
+        Slug?: string;
+        Date?: string;
+        Nom: string;
+        Genre: string;
+        Description: string;
+        Photo?: string;
+        Galerie?: string[];
+    };
+}
+
+const { Artiste } = Astro.props as Props;
+const lien = `/Artiste/${Artiste.Slug || Artiste.id}`;
+
+// Récupérer l'URL de la photo
+const photoUrl = getImageUrl(Artiste, Artiste?.Photo);
+
+// Récupérer les URLs de la galerie
+const galerieUrls =
+    Artiste?.Galerie &&
+    Array.isArray(Artiste.Galerie) &&
+    Artiste.Galerie.length > 0
+        ? Artiste.Galerie.map((filename) => getImageUrl(Artiste, filename))
+        : [];
 ---
 
-<a href={lien} class="block bg-[#1a1a1a] p-4 md:p-6 hover:bg-[#252525] transition-colors">
-    <p class="text-[#e63946] text-xs md:text-sm mb-2">{Artiste.jour}</p>
-    <h3 class="text-lg md:text-xl font-bold mb-2">{Artiste.nom}</h3>
-    <p class="text-[#f4a261] text-xs md:text-sm mb-2">{Artiste.genre}</p>
-    <p class="text-gray-400 text-xs md:text-sm">{Artiste.description}</p>
+<a
+    href={lien}
+    class="block rounded-lg overflow-hidden hover:bg-[#252525] transition-colors"
+>
+    <!-- Image de la photo -->
+    {
+        photoUrl && (
+            <div class="w-full h-48 md:h-56 overflow-hidden bg-gray-900">
+                <img
+                    src={photoUrl}
+                    alt={Artiste.Photo}
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
+            </div>
+        )
+    }
+
+    <!-- Contenu de la card -->
+    <div class="p-4 md:p-6">
+        {
+            Artiste.Date && (
+                <p class="text-[#e63946] text-xs md:text-sm mb-2">
+                    {Artiste.Date}
+                </p>
+            )
+        }
+        <h3 class="text-lg md:text-xl font-bold mb-2">{Artiste.Nom}</h3>
+        <p class="text-[#f4a261] text-xs md:text-sm mb-2">{Artiste.Genre}</p>
+        <p class="text-gray-400 text-xs md:text-sm line-clamp-2">
+            {Artiste.Description}
+        </p>
+    </div>
+
+    <!-- Aperçu galerie -->
+    {
+        galerieUrls.length > 0 && (
+            <div class="px-4 pb-4 md:px-6 md:pb-6">
+                <div class="grid grid-cols-3 gap-2">
+                    {galerieUrls.slice(0, 3).map((url) => (
+                        <div class="w-full aspect-square overflow-hidden rounded bg-gray-800">
+                            <img
+                                src={url}
+                                alt="Galerie"
+                                class="w-full h-full object-cover"
+                            />
+                        </div>
+                    ))}
+                </div>
+                {galerieUrls.length > 3 && (
+                    <p class="text-gray-400 text-xs mt-2 text-center">
+                        +{galerieUrls.length - 3} images
+                    </p>
+                )}
+            </div>
+        )
+    }
 </a>
